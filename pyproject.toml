@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "chess-embedding-experiments"
+version = "0.1.0"
+description = "For rapid prototyping on embedding experiments, starting from scratch"
+authors = ["Patrick Frank <patr.frank@gmx.de>"]
+
+[tool.poetry.dependencies]
+python = "^3.11.3"
+dvc = "^3.9.1"
+chess = "^1.10.0"
+keras = "^2.13.1"
+mlflow = "^2.5.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
