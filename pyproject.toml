@@ -5,14 +5,18 @@ description = "For rapid prototyping on embedding experiments, starting from scr
 authors = ["Patrick Frank <patr.frank@gmx.de>"]
 
 [tool.poetry.dependencies]
-python = "^3.11.3"
+python = ">=3.11.3,<3.12" # needed to install tensorflow # https://stackoverflow.com/a/76477590
 dvc = "^3.9.1"
 chess = "^1.10.0"
-keras = "^2.13.1"
+tensorflow = "^2.13.0"
 mlflow = "^2.5.0"
-numpy = "^1.25.1"
+numpy = "^1.24.3"
 
 [tool.poetry.dev-dependencies]
+
+
+[tool.poetry.group.dev.dependencies]
+jupyter = "^1.0.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
