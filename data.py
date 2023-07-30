@@ -4,6 +4,7 @@ import numpy as np
 import chess
 
 from utils.board_representations import board_to_tensor
+from utils.data_loader import save_train_test
 
 def generate_board() -> chess.Board:
 	"""
@@ -38,5 +39,8 @@ if __name__ == "__main__":
 		board_tensors[i] = new_board_tensor
 	
 	train_cutoff = int(POSITIONS*TRAIN_RATIO)
-	np.savez_compressed(f"{PATH}/train", tensors=board_tensors[:train_cutoff,:])
-	np.savez_compressed(f"{PATH}/test", tensors=board_tensors[train_cutoff:,:])
+	save_train_test(
+		path=PATH,
+		train_split=board_tensors[:train_cutoff,:],
+		test_split=board_tensors[train_cutoff:,:]
+	)
