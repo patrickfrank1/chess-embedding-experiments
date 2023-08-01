@@ -14,13 +14,13 @@ if __name__ == "__main__":
 	MODEL_DIR = "./model"
 
 	# get model definition
-	autoencoder: keras.Model = get_model()["autoencoder"]
+	autoencoder: keras.Model = get_model("vanilla_dense")["autoencoder"]
 
 	# compile model
 	autoencoder.compile(
 		optimizer='rmsprop',
-		loss='mse',
-		metrics=['mse', 'binary_crossentropy'],
+		loss=keras.losses.MeanSquaredError(),
+		metrics=[keras.losses.MeanSquaredError(), 'binary_crossentropy', keras.losses.BinaryCrossentropy(from_logits=True, name="ce_from_logits")],
 		jit_compile=True
 	)
 
@@ -29,6 +29,11 @@ if __name__ == "__main__":
 
 	# load train and test data
 	train_data, test_data = load_train_test(DATA_DIR)
+
+	print("Train data:")
+	print(train_data.shape, train_data.dtype, train_data[0,:,:,0])
+	print("Test data:")
+	print(test_data.shape, test_data.dtype, test_data[0,:,:,0])
 
 	# Defiane Callbacks
 	callbacks = [
