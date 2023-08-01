@@ -48,7 +48,7 @@ def bitboard_to_board(bb: np.ndarray) -> chess.Board:
 	return reconstructed_board
 
 def board_to_tensor(board: chess.Board) -> np.ndarray:
-	embedding = np.empty((8,8,15), dtype=bool)
+	embedding = np.zeros((8,8,15), dtype=bool)
 	# one plane per piece
 	for color in [1, 0]:
 		for i in range(1, 7): # P N B R Q K / white
