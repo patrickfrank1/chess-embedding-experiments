@@ -6,7 +6,7 @@ authors = ["Patrick Frank <patr.frank@gmx.de>"]
 
 [tool.poetry.dependencies]
 python = ">=3.10.6,<3.12" # needed to install tensorflow # https://stackoverflow.com/a/76477590
-dvc = "^3.9.1"
+dvc = "==2.55.0" # needs to be smaller than 3, because of dagshub incompatibility
 chess = "^1.10.0"
 tensorflow = "^2.13.0"
 mlflow = "^2.5.0"

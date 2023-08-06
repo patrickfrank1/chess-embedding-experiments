@@ -1,4 +1,5 @@
 [core]
     analytics = false
+    remote = origin
 ['remote "origin"']
     url = https://dagshub.com/patrickfrank/chess-embedding-experiments.dvc
