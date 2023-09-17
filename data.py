@@ -3,7 +3,7 @@ import random
 import numpy as np
 import chess
 
-from utils.board_representations import board_to_tensor
+from utils.board_representation import board_to_tensor
 from utils.data_loader import save_train_test
 
 def generate_board(max_pieces: int = 1) -> chess.Board:
@@ -40,12 +40,13 @@ def generate_board(max_pieces: int = 1) -> chess.Board:
 	return generate_board(max_pieces=max_pieces)
 	
 if __name__ == "__main__":
-	POSITIONS = 100_000
+	POSITIONS = 1_000_000
 	TRAIN_RATIO = 0.9
-	PATH = "./data"
+	PATH = "./data/medium"
 
 	board_tensors = np.empty((POSITIONS,8,8,15), dtype=bool)
 	for i in range(POSITIONS):
+		print(f"generating position {i+1} of {POSITIONS}", end="\r")
 		new_board = generate_board(max_pieces=6)
 		new_board_tensor = board_to_tensor(new_board)
 		board_tensors[i] = new_board_tensor
