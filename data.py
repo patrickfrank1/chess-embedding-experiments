@@ -40,9 +40,9 @@ def generate_board(max_pieces: int = 1) -> chess.Board:
 	return generate_board(max_pieces=max_pieces)
 	
 if __name__ == "__main__":
-	POSITIONS = 1_000_000
+	POSITIONS = 100_000
 	TRAIN_RATIO = 0.9
-	PATH = "./data/medium"
+	PATH = "./data"
 
 	board_tensors = np.empty((POSITIONS,8,8,15), dtype=bool)
 	for i in range(POSITIONS):

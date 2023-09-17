@@ -1,3 +1,5 @@
+import datetime as dt
+
 import tensorflow as tf
 from tensorflow import keras
 from keras import backend as K
@@ -6,7 +8,7 @@ import mlflow
 from utils.data_loader import load_train_test
 from model import get_model
 
-DTYPE = 'float16'
+DTYPE = 'bfloat16'
 
 
 @keras.saving.register_keras_serializable()
@@ -69,7 +71,7 @@ if __name__ == "__main__":
 	mlflow.autolog()
 
 	# parameters
-	DATA_DIR = "./data/medium"
+	DATA_DIR = "./data"
 	MODEL_DIR = "./model"
 
 	# get model definition
@@ -141,14 +143,12 @@ if __name__ == "__main__":
 	history = autoencoder.fit(
 		x=train_data,
 		y=train_data,
-		steps_per_epoch=10000,
-		validation_steps=1000,
 		epochs=100,
-		batch_size=8,
+		batch_size=32,
 		shuffle=True,
 		validation_data=(test_data, test_data),
 		callbacks=callbacks
 	)
 
 	# save
-	autoencoder.save(f"{MODEL_DIR}/vanilla_autoencoder.keras")
+	autoencoder.save(f"{MODEL_DIR}/{dt.datetime.now():%Y%m%d%H%M%S}_autoencoder.keras")
