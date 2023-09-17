@@ -17,6 +17,7 @@ python -m pip install -r /content/chess-embedding-experiments/requirements.txt -
 git config --global user.email "$GITHUB_EMAIL"
 git config --global user.name "$GITHUB_SIGNATURE_NAME"
 echo "https://$GITHUB_USER_NAME:$GITHUB_TOKEN@github.com/$GITHUB_REPO_OWNER/$GITHUB_REPO_NAME.git"
+git remote remove origin
 git remote add origin "https://$GITHUB_USER_NAME:$GITHUB_TOKEN@github.com/$GITHUB_REPO_OWNER/$GITHUB_REPO_NAME.git"
 
 # set up dvc
