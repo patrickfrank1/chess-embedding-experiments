@@ -40,7 +40,7 @@ def generate_board(max_pieces: int = 1) -> chess.Board:
 	return generate_board(max_pieces=max_pieces)
 	
 if __name__ == "__main__":
-	POSITIONS = 100_000
+	POSITIONS = 1_000_000
 	TRAIN_RATIO = 0.9
 	PATH = "./data"
 

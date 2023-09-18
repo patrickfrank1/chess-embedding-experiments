@@ -94,7 +94,7 @@ if __name__ == "__main__":
 	autoencoder.summary()
 
 	# load train and test data
-	train_data, test_data = load_train_test(DATA_DIR)
+	train_data, test_data = load_train_test(DATA_DIR, "position_tensor_000")
 
 	print("Train data:")
 	print(train_data.shape, train_data.dtype, train_data[0,:,:,0])
