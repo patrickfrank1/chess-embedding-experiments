@@ -5,8 +5,8 @@ from tensorflow import keras
 from keras import backend as K
 import mlflow
 
-from utils.data_loader import load_train_test
 from model import get_model
+from utils.sample_generator import AutoencoderDataGenerator
 
 DTYPE = 'bfloat16'
 
@@ -97,14 +97,27 @@ if __name__ == "__main__":
 	autoencoder.summary()
 
 	# load train and test data
-	train_data, test_data = load_train_test(DATA_DIR, "position_tensor_000")
+	BATCH_SIZE = 32
+	EPOCHS = 10
+	STEPS_PER_EPOCH = 1000
+	VALIDATION_STEPS = 100
+	train_data = AutoencoderDataGenerator(f"{DATA_DIR}/train", batch_size=BATCH_SIZE)
+	test_data = AutoencoderDataGenerator(f"{DATA_DIR}/test", batch_size=BATCH_SIZE)
 
 	print("Train data:")
-	print(train_data.shape, train_data.dtype, train_data[0,:,:,0])
+	print(f"Number of batches: {train_data.total_dataset_length()}")
+	train_batch = train_data.__getitem__(0)
+	print(f"First batch: len={len(train_batch)}")
+	print(f"First item: shape={train_batch[0].shape}, dtype={train_batch[0].dtype}")
+
 	print("Test data:")
-	print(test_data.shape, test_data.dtype, test_data[0,:,:,0])
-	train_sample = tf.convert_to_tensor(train_data[0:1], dtype=tf.float32)
-	test_sample = tf.convert_to_tensor(test_data[0:1], dtype=tf.float32)
+	print(f"Number of batches: {test_data.total_dataset_length()}")
+	test_batch = test_data.__getitem__(0)
+	print(f"First batch: len={len(test_batch)}")
+	print(f"First item: shape={test_batch[0].shape}, dtype={test_batch[0].dtype}")
+
+	train_sample = tf.convert_to_tensor(train_batch[0][0:1], dtype=tf.float32)
+	test_sample = tf.convert_to_tensor(test_batch[0][0:1], dtype=tf.float32)
 
 	print("Sum squared loss on applied to first train-test samples:")
 	print(sum_squared_loss(train_sample, test_sample))
@@ -144,12 +157,13 @@ if __name__ == "__main__":
 
 	# train model
 	history = autoencoder.fit(
-		x=train_data,
-		y=train_data,
-		epochs=1,
-		batch_size=32,
+		train_data,
+		epochs=EPOCHS,
+		steps_per_epoch=STEPS_PER_EPOCH,
+		validation_steps=VALIDATION_STEPS,
+		batch_size=BATCH_SIZE,
 		shuffle=True,
-		validation_data=(test_data, test_data),
+		validation_data=test_data,
 		callbacks=callbacks
 	)
 
