@@ -5,7 +5,7 @@ description = "For rapid prototyping on embedding experiments, starting from scr
 authors = ["Patrick Frank <patr.frank@gmx.de>"]
 
 [tool.poetry.dependencies]
-python = ">=3.10.6,<3.12" # needed to install tensorflow # https://stackoverflow.com/a/76477590
+python = ">=3.9.16,<3.12" # needed to install tensorflow # https://stackoverflow.com/a/76477590
 dvc = {version = "2.55.0", extras = ["s3"]} # needs to be smaller than 3, because of dagshub incompatibility
 chess = "^1.10.0"
 tensorflow = "^2.13.0"
