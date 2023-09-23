@@ -45,7 +45,7 @@ def cnn_dense() -> dict[str, keras.Model]:
 	return {'encoder': encoder, 'decoder': decoder, 'autoencoder': autoencoder}
 
 def vanilla_dense() -> dict[str, keras.Model]:
-	EMBEDDING_SIZE = 768
+	EMBEDDING_SIZE = 256
 	dtype = tf.bfloat16
 
 	# Encoder

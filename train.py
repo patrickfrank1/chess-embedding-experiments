@@ -78,7 +78,7 @@ if __name__ == "__main__":
 	DATA_DIR = "./data"
 	MODEL_DIR = "./model"
 	BATCH_SIZE = 32
-	EPOCHS = 10
+	EPOCHS = 30
 	STEPS_PER_EPOCH = None #1000
 	VALIDATION_STEPS = None #100
 
@@ -87,7 +87,7 @@ if __name__ == "__main__":
 	os.makedirs(f"{MODEL_DIR}/checkpoints", exist_ok=True)
 
 	# get model definition
-	autoencoder: keras.Model = get_model("trivial")["autoencoder"]
+	autoencoder: keras.Model = get_model("vanilla_dense")["autoencoder"]
 
 	# compile model
 	autoencoder.compile(
