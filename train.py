@@ -1,3 +1,4 @@
+import os
 import datetime as dt
 
 import tensorflow as tf
@@ -76,6 +77,14 @@ if __name__ == "__main__":
 	# parameters
 	DATA_DIR = "./data"
 	MODEL_DIR = "./model"
+	BATCH_SIZE = 32
+	EPOCHS = 10
+	STEPS_PER_EPOCH = None #1000
+	VALIDATION_STEPS = None #100
+
+	# create required directories if they do not yet exist
+	os.makedirs(DATA_DIR, exist_ok=True)
+	os.makedirs(f"{MODEL_DIR}/checkpoints", exist_ok=True)
 
 	# get model definition
 	autoencoder: keras.Model = get_model("trivial")["autoencoder"]
@@ -97,21 +106,17 @@ if __name__ == "__main__":
 	autoencoder.summary()
 
 	# load train and test data
-	BATCH_SIZE = 32
-	EPOCHS = 10
-	STEPS_PER_EPOCH = 1000
-	VALIDATION_STEPS = 100
 	train_data = AutoencoderDataGenerator(f"{DATA_DIR}/train", batch_size=BATCH_SIZE)
 	test_data = AutoencoderDataGenerator(f"{DATA_DIR}/test", batch_size=BATCH_SIZE)
 
 	print("Train data:")
-	print(f"Number of batches: {train_data.total_dataset_length()}")
+	print(f"Number of train samples: {train_data.total_dataset_length()}")
 	train_batch = train_data.__getitem__(0)
 	print(f"First batch: len={len(train_batch)}")
 	print(f"First item: shape={train_batch[0].shape}, dtype={train_batch[0].dtype}")
 
 	print("Test data:")
-	print(f"Number of batches: {test_data.total_dataset_length()}")
+	print(f"Number of test samples: {test_data.total_dataset_length()}")
 	test_batch = test_data.__getitem__(0)
 	print(f"First batch: len={len(test_batch)}")
 	print(f"First item: shape={test_batch[0].shape}, dtype={test_batch[0].dtype}")
@@ -151,6 +156,12 @@ if __name__ == "__main__":
 			min_delta=0.1,
 			cooldown=0,
 			min_lr=1e-6
+		),
+		tf.keras.callbacks.BackupAndRestore(
+			f"{MODEL_DIR}/checkpoints",
+			save_freq="epoch",
+			delete_checkpoint=True,
+			save_before_preemption=False
 		)
 	]
 
