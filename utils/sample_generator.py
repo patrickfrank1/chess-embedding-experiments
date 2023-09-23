@@ -40,5 +40,5 @@ class AutoencoderDataGenerator(tf.keras.utils.Sequence):
         # Calculate the total number of batches based on the number of samples in the file and the batch size.
         number_samples = 0
         for file_path in self._get_npz_files():
-            number_samples += int(np.ceil(len(np.load(file_path)['data']) / self.batch_size))
+            number_samples += len(np.load(file_path)['data'])
         return number_samples
