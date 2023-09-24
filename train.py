@@ -7,7 +7,7 @@ from keras import backend as K
 import mlflow
 
 from model import get_model
-from utils.sample_generator import AutoencoderDataGenerator
+from utils.sample_generator import AutoencoderDataGenerator, ReconstructAutoencoderDataGenerator
 
 DTYPE = 'bfloat16'
 
@@ -87,7 +87,7 @@ if __name__ == "__main__":
 	os.makedirs(f"{MODEL_DIR}/checkpoints", exist_ok=True)
 
 	# get model definition
-	autoencoder: keras.Model = get_model("vanilla_dense")["autoencoder"]
+	autoencoder: keras.Model = get_model("trivial")["autoencoder"]
 
 	# compile model
 	autoencoder.compile(
@@ -106,20 +106,38 @@ if __name__ == "__main__":
 	autoencoder.summary()
 
 	# load train and test data
-	train_data = AutoencoderDataGenerator(f"{DATA_DIR}/train", batch_size=BATCH_SIZE)
-	test_data = AutoencoderDataGenerator(f"{DATA_DIR}/test", batch_size=BATCH_SIZE)
+	train_data = ReconstructAutoencoderDataGenerator(f"{DATA_DIR}/train", number_squares=7, batch_size=BATCH_SIZE)
+	test_data = ReconstructAutoencoderDataGenerator(f"{DATA_DIR}/test", number_squares=7, batch_size=BATCH_SIZE)
+
+	# TODO: also print a couple of layers
 
 	print("Train data:")
 	print(f"Number of train samples: {train_data.total_dataset_length()}")
 	train_batch = train_data.__getitem__(0)
 	print(f"First batch: len={len(train_batch)}")
-	print(f"First item: shape={train_batch[0].shape}, dtype={train_batch[0].dtype}")
+	train_sample = train_batch[0]
+	print(f"First item: shape={train_sample.shape}, dtype={train_sample.dtype}")
+
+	pieces = ["pawn", "knight", "bishop", "rook", "queen", "king"]
+	piece_map = ["white "+piece for piece in pieces] + \
+    			["black "+piece for piece in pieces] + \
+    			["castling rights", "en passant", "turn"]
+	print("First train position:")
+	for i, piece in enumerate(piece_map):
+		print(piece)
+		print(train_sample[0,:,:,i].astype(int))
 
 	print("Test data:")
 	print(f"Number of test samples: {test_data.total_dataset_length()}")
 	test_batch = test_data.__getitem__(0)
 	print(f"First batch: len={len(test_batch)}")
-	print(f"First item: shape={test_batch[0].shape}, dtype={test_batch[0].dtype}")
+	test_sample = test_batch[0]
+	print(f"First item: shape={test_sample.shape}, dtype={test_sample.dtype}")
+
+	print("First test position:")
+	for i, piece in enumerate(piece_map):
+		print(piece)
+		print(test_sample[0,:,:,i].astype(int))
 
 	train_sample = tf.convert_to_tensor(train_batch[0][0:1], dtype=tf.float32)
 	test_sample = tf.convert_to_tensor(test_batch[0][0:1], dtype=tf.float32)
