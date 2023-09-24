@@ -18,6 +18,8 @@ def _increment_postfix(path: str, pattern: str) -> str:
 
 def save_train_test(path: str, train_split: np.ndarray , test_split: np.ndarray) -> None:
 	train_path, test_path = f"{path}/train", f"{path}/test"
+	os.makedirs(train_path, exist_ok=True)
+	os.makedirs(test_path, exist_ok=True)
 	train_postfix = _increment_postfix(train_path, "position_tensor_*.npz")
 	test_postfix = _increment_postfix(test_path, "position_tensor_*.npz")
 	postfix = max(train_postfix, test_postfix)

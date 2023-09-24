@@ -3,8 +3,8 @@ import random
 import numpy as np
 import chess
 
-from utils.board_representation import board_to_tensor
-from utils.data_loader import save_train_test
+from src.preprocessing.board_representation import board_to_tensor
+from src.utils.data_loader import save_train_test
 
 def generate_board(max_pieces: int = 1) -> chess.Board:
 	"""
