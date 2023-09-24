@@ -2,9 +2,9 @@
 
 ## Cheat Sheet
 
-- Generate random training positions
+- Generate training positions
 
-    python -m src.run.generate_random_positions
+    python -m src.run.generate_positions
 
 - Train a neural network
 
