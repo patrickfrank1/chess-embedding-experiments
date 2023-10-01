@@ -4,7 +4,7 @@ from keras import backend as K
 
 DTYPE = 'bfloat16'
 
-@keras.saving.register_keras_serializable()
+@tf.keras.utils.register_keras_serializable()
 def sum_squared_loss(y_true, y_pred):
 	batch_size = tf.cast(tf.shape(y_true)[0], DTYPE)
 	y_true = K.cast(y_true, dtype=DTYPE)
@@ -13,7 +13,7 @@ def sum_squared_loss(y_true, y_pred):
 	loss = K.sum(squared_difference) / batch_size
 	return loss
 
-@keras.saving.register_keras_serializable()
+@tf.keras.utils.register_keras_serializable()
 def num_pc_reg(y_true, y_pred):
 	epsilon = 1.e-3
 	batch_size = tf.cast(tf.shape(y_true)[0], DTYPE)
@@ -24,7 +24,7 @@ def num_pc_reg(y_true, y_pred):
 	loss = K.square(pieces_true - pieces_predicted) / (epsilon + pieces_predicted) / batch_size
 	return loss
 
-@keras.saving.register_keras_serializable()
+@tf.keras.utils.register_keras_serializable()
 def pc_column_reg(y_true, y_pred):
 	batch_size = tf.cast(tf.shape(y_true)[0], DTYPE)
 	y_true = K.cast(y_true, dtype=DTYPE)
@@ -37,7 +37,7 @@ def pc_column_reg(y_true, y_pred):
 	loss = K.sum(deviation_from_legal) / batch_size
 	return loss
 
-@keras.saving.register_keras_serializable()
+@tf.keras.utils.register_keras_serializable()
 def pc_plane_reg(y_true, y_pred):
 	batch_size = tf.cast(tf.shape(y_true)[0], DTYPE)
 	y_true = K.cast(y_true, dtype=DTYPE)
@@ -50,7 +50,7 @@ def pc_plane_reg(y_true, y_pred):
 	loss = K.sum(deviation_from_legal) / batch_size
 	return loss
 
-@keras.saving.register_keras_serializable()
+@tf.keras.utils.register_keras_serializable()
 def custom_regularized_loss(y_true, y_pred):
 	alpha = 1.0
 	beta = 0.1
