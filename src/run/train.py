@@ -16,10 +16,11 @@ if __name__ == "__main__":
 	# parameters
 	DATA_DIR = "./data"
 	MODEL_DIR = "./model"
-	BATCH_SIZE = 32
-	EPOCHS = 30
+	BATCH_SIZE = 4
+	EPOCHS = 20
 	STEPS_PER_EPOCH = None #1000
 	VALIDATION_STEPS = None #100
+	MASKED_SQUARES = 2
 
 	# create required directories if they do not yet exist
 	os.makedirs(DATA_DIR, exist_ok=True)
@@ -45,8 +46,8 @@ if __name__ == "__main__":
 	autoencoder.summary()
 
 	# load train and test data
-	train_data = ReconstructAutoencoderDataGenerator(f"{DATA_DIR}/train", number_squares=7, batch_size=BATCH_SIZE)
-	test_data = ReconstructAutoencoderDataGenerator(f"{DATA_DIR}/test", number_squares=7, batch_size=BATCH_SIZE)
+	train_data = ReconstructAutoencoderDataGenerator(f"{DATA_DIR}/train", number_squares=MASKED_SQUARES, batch_size=BATCH_SIZE)
+	test_data = ReconstructAutoencoderDataGenerator(f"{DATA_DIR}/test", number_squares=MASKED_SQUARES, batch_size=BATCH_SIZE)
 
 	# TODO: also print a couple of layers
 

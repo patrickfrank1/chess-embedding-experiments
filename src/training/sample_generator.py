@@ -1,24 +1,19 @@
-import os
-
 import numpy as np
 import tensorflow as tf
+
+from src.utils.fileops import file_paths_from_directory
 
 
 class AutoencoderDataGenerator(tf.keras.utils.Sequence):
     def __init__(self, directory_path, batch_size):
         self.dtype = np.int8
         self.directory_path = directory_path
-        self.files = self._get_npz_files()
+        self.files = file_paths_from_directory(self.directory_path, ".npz")
         self.current_file = self.files.pop()
         self.visited_files = []
         self.train_positions = None
         self.label_positions = np.load(self.current_file)['data'].astype(self.dtype)
         self.batch_size = batch_size
-
-    def _get_npz_files(self) -> list[str]:
-        file_list = os.listdir(self.directory_path)
-        npz_files = [f"{self.directory_path}/{filename}" for filename in file_list if filename.endswith(".npz")]
-        return npz_files
 
     def __len__(self):
         # Calculate the total number of batches based on the number of samples in the file and the batch size.
@@ -45,7 +40,7 @@ class AutoencoderDataGenerator(tf.keras.utils.Sequence):
     def total_dataset_length(self):
         # Calculate the total number of batches based on the number of samples in the file and the batch size.
         number_samples = 0
-        for file_path in self._get_npz_files():
+        for file_path in file_paths_from_directory(self.directory_path, ".npz"):
             number_samples += len(np.load(file_path)['data'])
         return number_samples
 
@@ -53,13 +48,13 @@ class AutoencoderDataGenerator(tf.keras.utils.Sequence):
 class ReconstructAutoencoderDataGenerator(AutoencoderDataGenerator):
     def __init__(self, *args, number_squares, **kwargs):
         self.number_squares = number_squares
+        self.mask_token = -1
         super().__init__(*args, **kwargs)
         self._mask_squares()
 
     def on_epoch_end(self):
         super().on_epoch_end()
         self._mask_squares()
-
 
     def _mask_squares(self):
         squares = np.arange(64)
@@ -68,5 +63,5 @@ class ReconstructAutoencoderDataGenerator(AutoencoderDataGenerator):
         for i in range(num_positions):
             np.random.shuffle(squares)
             mask_squares = squares[:self.number_squares]
-            tmp_positions[i,mask_squares,:] = -1
+            tmp_positions[i,mask_squares,:] = self.mask_token
         self.train_positions = tmp_positions.reshape(num_positions, 8, 8, 15)
