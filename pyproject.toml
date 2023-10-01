@@ -8,7 +8,7 @@ authors = ["Patrick Frank <patr.frank@gmx.de>"]
 python = ">=3.9.16,<3.12" # needed to install tensorflow # https://stackoverflow.com/a/76477590
 dvc = {version = "2.55.0", extras = ["s3"]} # needs to be smaller than 3, because of dagshub incompatibility
 chess = "^1.10.0"
-tensorflow = "^2.13.0"
+tensorflow = "^2.11.0"
 mlflow = "^2.5.0"
 numpy = "^1.24.3"
 
