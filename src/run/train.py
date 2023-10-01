@@ -20,14 +20,14 @@ if __name__ == "__main__":
 	EPOCHS = 20
 	STEPS_PER_EPOCH = None #1000
 	VALIDATION_STEPS = None #100
-	MASKED_SQUARES = 2
+	MASKED_SQUARES = 0
 
 	# create required directories if they do not yet exist
 	os.makedirs(DATA_DIR, exist_ok=True)
 	os.makedirs(f"{MODEL_DIR}/checkpoints", exist_ok=True)
 
 	# get model definition
-	autoencoder: keras.Model = get_model("trivial")["autoencoder"]
+	autoencoder: keras.Model = get_model("vanilla_dense")["autoencoder"]
 
 	# compile model
 	autoencoder.compile(
@@ -43,7 +43,7 @@ if __name__ == "__main__":
 	)
 
 	# print model architecture
-	autoencoder.summary()
+	autoencoder.summary(expand_nested=True)
 
 	# load train and test data
 	train_data = ReconstructAutoencoderDataGenerator(f"{DATA_DIR}/train", number_squares=MASKED_SQUARES, batch_size=BATCH_SIZE)
