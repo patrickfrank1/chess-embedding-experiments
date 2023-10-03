@@ -48,7 +48,7 @@ class AutoencoderDataGenerator(tf.keras.utils.Sequence):
 class ReconstructAutoencoderDataGenerator(AutoencoderDataGenerator):
     def __init__(self, *args, number_squares, **kwargs):
         self.number_squares = number_squares
-        self.mask_token = -1
+        self.mask_token = 0.5
         super().__init__(*args, **kwargs)
         self._mask_squares()
 

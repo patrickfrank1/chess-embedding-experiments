@@ -11,7 +11,7 @@ from src.utils.fileops import file_paths_from_directory
 SAMPLE_POSITIONS = True
 SAMPLE_ELO = True
 SUBSAMPLE_POSITIONS = 0.33
-THRESHOLD_ELO = 1800.0
+THRESHOLD_ELO = 2000.0
 
 def sample_position_by_ply(ply: int) -> float:
 	return min((ply/30.0**2), 1.0)

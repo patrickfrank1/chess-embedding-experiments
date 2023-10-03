@@ -3,6 +3,7 @@ import datetime as dt
 
 import tensorflow as tf
 from tensorflow import keras
+from keras.utils import plot_model
 import mlflow
 
 from src.modeling.model import get_model
@@ -16,18 +17,18 @@ if __name__ == "__main__":
 	# parameters
 	DATA_DIR = "./data"
 	MODEL_DIR = "./model"
-	BATCH_SIZE = 4
-	EPOCHS = 20
+	BATCH_SIZE = 16
+	EPOCHS = 150
 	STEPS_PER_EPOCH = None #1000
 	VALIDATION_STEPS = None #100
-	MASKED_SQUARES = 0
+	MASKED_SQUARES = 2
 
 	# create required directories if they do not yet exist
 	os.makedirs(DATA_DIR, exist_ok=True)
 	os.makedirs(f"{MODEL_DIR}/checkpoints", exist_ok=True)
 
 	# get model definition
-	autoencoder: keras.Model = get_model("vanilla_dense")["autoencoder"]
+	autoencoder: keras.Model = get_model("skip_equi_dense")["autoencoder"]
 
 	# compile model
 	autoencoder.compile(
@@ -41,6 +42,9 @@ if __name__ == "__main__":
 		],
 		jit_compile=True
 	)
+
+	# plot model graph
+	plot_model(autoencoder, to_file=f"{MODEL_DIR}/model_plot.png", show_shapes=True, expand_nested=True)
 
 	# print model architecture
 	autoencoder.summary(expand_nested=True)
