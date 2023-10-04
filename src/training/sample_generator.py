@@ -6,7 +6,7 @@ from src.utils.fileops import file_paths_from_directory
 
 class AutoencoderDataGenerator(tf.keras.utils.Sequence):
     def __init__(self, directory_path, batch_size):
-        self.dtype = np.int8
+        self.dtype = np.float16
         self.directory_path = directory_path
         self.files = file_paths_from_directory(self.directory_path, ".npz")
         self.current_file = self.files.pop()
