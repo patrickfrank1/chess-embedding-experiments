@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Python Module - src.run.train",
+        "type": "python",
+        "request": "launch",
+        "program": "${workspaceFolder}/src/run/train.py",
+        "env": {
+            "PYTHONPATH": "${workspaceFolder}"
+          },
+        "args": [],
+        "cwd": "${workspaceFolder}",
+        "console": "integratedTerminal"
+      }
+    ]
+  }
