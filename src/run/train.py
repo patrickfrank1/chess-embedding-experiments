@@ -18,10 +18,10 @@ if __name__ == "__main__":
 	DATA_DIR = "./data"
 	MODEL_DIR = "./model"
 	BATCH_SIZE = 16
-	EPOCHS = 150
+	EPOCHS = 50
 	STEPS_PER_EPOCH = None #1000
 	VALIDATION_STEPS = None #100
-	MASKED_SQUARES = 2
+	MASKED_SQUARES = 6
 
 	# create required directories if they do not yet exist
 	os.makedirs(DATA_DIR, exist_ok=True)

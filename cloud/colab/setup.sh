@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd /content/chess-embedding-experiments/colab
+cd /content/chess-embedding-experiments/cloud/colab
 
 # Load environment variables from .env file
 if [ -f .env ]; then
@@ -9,9 +9,6 @@ else
     echo "Error: .env file not found."
     exit 1
 fi
-
-# install dependencies
-python -m pip install -r /content/chess-embedding-experiments/requirements.txt --ignore-installed
 
 # set up git
 git config --global user.email "$GITHUB_EMAIL"

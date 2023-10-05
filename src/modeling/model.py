@@ -79,8 +79,8 @@ def skip_dense() -> dict[str, keras.Model]:
 	return {'encoder': encoder, 'decoder': decoder, 'autoencoder': autoencoder}
 
 def skip_equi_dense() -> dict[str, keras.Model]:
-	EMBEDDING_SIZE = 128
-	BLOCKS = 2
+	EMBEDDING_SIZE = 768
+	BLOCKS = 10
 	dtype = tf.bfloat16
 
 	def block_with_skip_connection(previous_layer):
