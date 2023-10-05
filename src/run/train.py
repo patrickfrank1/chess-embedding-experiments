@@ -18,7 +18,7 @@ if __name__ == "__main__":
 	DATA_DIR = "./data"
 	MODEL_DIR = "./model"
 	BATCH_SIZE = 16
-	EPOCHS = 50
+	EPOCHS = 100
 	STEPS_PER_EPOCH = None #1000
 	VALIDATION_STEPS = None #100
 	MASKED_SQUARES = 6
@@ -69,7 +69,7 @@ if __name__ == "__main__":
 	print("First train position:")
 	for i, piece in enumerate(piece_map):
 		print(piece)
-		print(train_sample[0,:,:,i].astype(int))
+		print(train_sample[0,:,:,i].astype(float))
 
 	print("Test data:")
 	print(f"Number of test samples: {test_data.total_dataset_length()}")
@@ -81,7 +81,7 @@ if __name__ == "__main__":
 	print("First test position:")
 	for i, piece in enumerate(piece_map):
 		print(piece)
-		print(test_sample[0,:,:,i].astype(int))
+		print(test_sample[0,:,:,i].astype(float))
 
 	train_sample = tf.convert_to_tensor(train_batch[0][0:1], dtype=tf.float32)
 	test_sample = tf.convert_to_tensor(test_batch[0][0:1], dtype=tf.float32)
