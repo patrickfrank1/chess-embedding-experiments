@@ -1,6 +1,29 @@
 import chess
 import numpy as np
 
+PIECE_ENCODING = {
+    "empty": 15,
+	"mask": 16,
+    "P": 17,
+    "N": 18,
+    "B": 19,
+    "R": 20,
+    "Q": 21,
+    "K": 22,
+    "p": 23,
+    "n": 24,
+    "b": 25,
+    "r": 26,
+    "q": 27,
+    "k": 28,
+    "turn_white": 29,
+    "turn_black": 30,
+    "no_castling": 31,
+    "castling": 32
+}
+
+INVERSE_PIECE_ENCODING = {v:k for k,v in PIECE_ENCODING.items()}
+
 def board_to_bitboard(board: chess.Board) -> np.ndarray:
 	embedding = np.array([], dtype=bool)
 	for color in [1, 0]:
@@ -46,6 +69,45 @@ def bitboard_to_board(bb: np.ndarray) -> chess.Board:
 	if bb[772]: castling_rights += 'k'
 	reconstructed_board.set_castling_fen(castling_rights)
 	return reconstructed_board
+
+def board_to_token_sequence(board: chess.Board) -> np.ndarray:
+    pieces = [board.piece_at(square) for square in chess.SQUARES]
+    encoding = np.zeros((64+5), dtype=np.int8)
+
+    for i, piece in enumerate(pieces):
+        encoding[i] = PIECE_ENCODING[piece.symbol() if piece is not None else "empty"]
+    encoding[64] = PIECE_ENCODING["turn_white" if board.turn else "turn_black"]
+    encoding[65] = PIECE_ENCODING["castling" if board.has_kingside_castling_rights(chess.WHITE) else "no_castling"]
+    encoding[66] = PIECE_ENCODING["castling" if board.has_queenside_castling_rights(chess.WHITE) else "no_castling"]
+    encoding[67] = PIECE_ENCODING["castling" if board.has_kingside_castling_rights(chess.BLACK) else "no_castling"]
+    encoding[68] = PIECE_ENCODING["castling" if board.has_queenside_castling_rights(chess.BLACK) else "no_castling"]
+    return encoding
+
+def _piece_id_to_piece(id: int) -> chess.Piece | None:
+	if 17 <= id <= 28:
+		return chess.Piece.from_symbol(INVERSE_PIECE_ENCODING[id])
+	return None
+
+def token_sequence_to_board(sequence: np.ndarray) -> chess.Board:
+	assert sequence.shape == (69,)
+	board = chess.Board()
+	board.clear()
+
+	piece_map = {
+		i: _piece_id_to_piece(piece_id)
+		for i, piece_id in enumerate(sequence[:64])
+		if _piece_id_to_piece(piece_id) is not None
+	}
+	board.set_piece_map(piece_map)
+	
+	board.turn = sequence[64] == 29
+	castling_rights = ""
+	if sequence[65] == 32: castling_rights += "K"
+	if sequence[66] == 32: castling_rights += "Q"
+	if sequence[67] == 32: castling_rights += "k"
+	if sequence[68] == 32: castling_rights += "q"
+	board.set_castling_fen(castling_rights)
+	return board
 
 def board_to_tensor(board: chess.Board) -> np.ndarray:
 	embedding = np.zeros((8,8,15), dtype=bool)
