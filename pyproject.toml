@@ -11,6 +11,7 @@ chess = "^1.10.0"
 tensorflow = "^2.11.0" # Downgraded from 2.13.0 for AWS Sage Maker Lab Compatibility
 mlflow = "^2.5.0"
 numpy = "^1.24.3"
+keras-nlp = "^0.6.2"
 
 [tool.poetry.dev-dependencies]
 jupyter = "^1.0.0"
