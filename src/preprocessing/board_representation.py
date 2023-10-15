@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import chess
 import numpy as np
 
@@ -99,7 +101,7 @@ def token_sequence_to_board(sequence: np.ndarray) -> chess.Board:
 		if _piece_id_to_piece(piece_id) is not None
 	}
 	board.set_piece_map(piece_map)
-	
+
 	board.turn = sequence[64] == 29
 	castling_rights = ""
 	if sequence[65] == 32: castling_rights += "K"

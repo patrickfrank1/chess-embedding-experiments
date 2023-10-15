@@ -1,7 +1,9 @@
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
-from keras import layers, Model
+from keras import layers
+from keras import backend as K
+from keras_nlp import layers as nlp_layers
 
 def get_model(model: str) -> dict[str, keras.Model]:
 	if model == "cnn_dense":
@@ -14,6 +16,8 @@ def get_model(model: str) -> dict[str, keras.Model]:
 		return skip_dense()
 	elif model == "skip_equi_dense":
 		return skip_equi_dense()
+	elif model == "encoder_decoder_transformer":
+		return encoder_decoder_transformer()
 	else:
 		raise ValueError("The requested neral network architecture does not exist.")
 
@@ -79,8 +83,8 @@ def skip_dense() -> dict[str, keras.Model]:
 	return {'encoder': encoder, 'decoder': decoder, 'autoencoder': autoencoder}
 
 def skip_equi_dense() -> dict[str, keras.Model]:
-	EMBEDDING_SIZE = 768
-	BLOCKS = 10
+	EMBEDDING_SIZE = 2560
+	BLOCKS = 2
 	dtype = tf.bfloat16
 
 	def block_with_skip_connection(previous_layer):
@@ -151,7 +155,7 @@ def cnn_dense() -> dict[str, keras.Model]:
 	return {'encoder': encoder, 'decoder': decoder, 'autoencoder': autoencoder}
 
 def trivial() -> dict[str, keras.Model]:
-	EMBEDDING_SIZE = 768
+	EMBEDDING_SIZE = 5120
 	dtype = tf.bfloat16
 
 	# Encoder
@@ -170,3 +174,114 @@ def trivial() -> dict[str, keras.Model]:
 	autoencoder = keras.Model(inputs=encoder_input, outputs=decoder(encoder(encoder_input)), name='autoencoder')
 
 	return {'encoder': encoder, 'decoder': decoder, 'autoencoder': autoencoder}
+
+def encoder_decoder_transformer() -> dict[str, keras.Model]:
+	ENCODING_DTYPE = "int8"
+	NN_DTYPE = "bfloat16"
+	SEQUENCE_LENGTH = 69
+	VOCABULARY_SIZE = 64
+	TRANSFORMER_DIMENSION = 256
+	EMBEDDING_DIMENSION = 256
+	DROPOUT = 0.1
+	NUM_HEADS = 16
+	ENCODER_LAYERS = 2
+	DECODER_LAYERS = 2
+	STD_DEV = 0.02
+
+	# Encoder
+	encoder_token_ids = layers.Input(shape=(SEQUENCE_LENGTH), dtype=ENCODING_DTYPE, name="encoder_token_ids")
+
+	# Embed tokens ans positions
+	token_embedding_layer = nlp_layers.ReversibleEmbedding(
+		input_dim=VOCABULARY_SIZE,
+		output_dim=EMBEDDING_DIMENSION,
+		embeddings_initializer=keras.initializers.TruncatedNormal(stddev=STD_DEV),
+		name="token_embedding",
+	)
+	token_embedding = token_embedding_layer(encoder_token_ids)
+
+	position_embedding = nlp_layers.PositionEmbedding(
+		initializer=keras.initializers.TruncatedNormal(stddev=STD_DEV),
+		sequence_length=SEQUENCE_LENGTH,
+		name="position_embedding",
+	)(token_embedding)
+
+    # Sum, normalize and apply dropout to embeddings.
+	x = keras.layers.Add()([token_embedding, position_embedding])
+	x = keras.layers.LayerNormalization(
+		name="embeddings_layer_norm",
+		axis=-1,
+		epsilon=1e-12,
+		dtype=NN_DTYPE,
+	)(x)
+	x = keras.layers.Dropout(DROPOUT,name="embeddings_dropout",)(x)
+
+	# Apply successive transformer encoder blocks.
+	for i in range(ENCODER_LAYERS):
+		x = nlp_layers.TransformerEncoder(
+			num_heads=NUM_HEADS,
+			intermediate_dim=TRANSFORMER_DIMENSION,
+			activation=lambda x: keras.activations.gelu(x, approximate=True),
+			dropout=DROPOUT,
+			layer_norm_epsilon=1e-12,
+			kernel_initializer=keras.initializers.TruncatedNormal(stddev=STD_DEV),
+			name=f"transformer_layer_{i}",
+		)(x)
+	
+	encoder_embedding = keras.layers.Dense(
+		EMBEDDING_DIMENSION,
+		kernel_initializer=keras.initializers.TruncatedNormal(stddev=STD_DEV),
+		activation="tanh",
+		name="dense",
+	)(x)
+
+	# Decoder
+	decoder_input = layers.Input(shape=(SEQUENCE_LENGTH, EMBEDDING_DIMENSION), dtype=NN_DTYPE, name="decoder_input")
+	x = keras.layers.Dropout(
+		DROPOUT,
+		name="embeddings_dropout",
+	)(decoder_input)
+
+	# Apply successive transformer decoder blocks.
+	for i in range(DECODER_LAYERS):
+		x = nlp_layers.TransformerDecoder(
+			intermediate_dim=TRANSFORMER_DIMENSION,
+			num_heads=NUM_HEADS,
+			dropout=DROPOUT,
+			layer_norm_epsilon=1e-05,
+			activation=lambda x: keras.activations.gelu(x, approximate=True),
+			kernel_initializer=keras.initializers.RandomNormal(stddev=STD_DEV),
+			normalize_first=True,
+			name=f"transformer_layer_{i}",
+		)(x)
+
+	decoder = keras.layers.LayerNormalization(
+		name="layer_norm",
+		axis=-1,
+		epsilon=1e-05,
+		dtype=NN_DTYPE,
+	)(x)
+	decoder_logits = token_embedding_layer(decoder, reverse=True)
+
+	# Autoencoder
+	encoder = keras.Model(inputs=encoder_token_ids, outputs=encoder_embedding, name='encoder')
+	decoder = keras.Model(inputs=decoder_input, outputs=decoder_logits, name='decoder')
+	autoencoder = keras.Model(inputs=encoder_token_ids, outputs=decoder(encoder(encoder_token_ids)), name='autoencoder')
+
+	return {'encoder': encoder, 'decoder': decoder, 'autoencoder': autoencoder}
+
+class PositionPredictionHead():
+	def __init__(self, backend: keras.Model):
+		self.backend = backend
+
+	def predict_on_batch(self, inputs):
+		logits = self.backend.predict_on_batch(inputs)
+		probabilities = K.softmax(logits, axis=2)
+		predicted_tokens = K.argmax(probabilities, axis=2)
+		return predicted_tokens
+	
+	def evaluate(self, x):
+		y = self.predict_on_batch(x)
+		diff = tf.subtract(y, x)
+		mispredicted = tf.math.count_nonzero(diff)
+		return mispredicted
