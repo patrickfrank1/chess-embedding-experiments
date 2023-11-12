@@ -33,6 +33,7 @@
 
 ## TODOs
 
+- [ ] Document findings of up to current model training
 - [ ] Write to db from .npy files
   - [ ] write tokenized positions with some metadata and id
   - [ ] write embeddings generated from a model
