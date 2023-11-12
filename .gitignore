@@ -1,5 +1,10 @@
+# Custom
 # Exclude mlflow files
 mlruns
+# Exclude milvus files
+volumes
+# requirements are managed by poetry
+requirements.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

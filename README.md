@@ -21,3 +21,23 @@
 - Export dependencies to requirements.txt
 
     poetry export > requirements.txt
+
+## Notes
+
+### Milvus
+
+- could only get milvus 2.3.1 to work, so use that for now
+- but had to downgrade python to 3.9, because of compatibility issues
+- and only works with recent tensorflow version, so it's incompatible with aws sage maker
+  - maybe I need to build a different toolchain for different python versions
+
+## TODOs
+
+- [ ] Write to db from .npy files
+  - [ ] write tokenized positions with some metadata and id
+  - [ ] write embeddings generated from a model
+- [ ] Write to db from .pgn file
+  - maybe some refactoring is needed
+- make embeddings better for search
+  - document approaches
+  - make a plan
