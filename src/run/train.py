@@ -22,8 +22,8 @@ if __name__ == "__main__":
 	MODEL_DIR = "./model"
 	BATCH_SIZE = 16
 	EPOCHS = 20
-	STEPS_PER_EPOCH = 100
-	VALIDATION_STEPS = 10
+	STEPS_PER_EPOCH = 1000
+	VALIDATION_STEPS = 100
 	MASKED_SQUARES = 10
 	MODEL_TYPE = "encoder_decoder_transformer"
 
@@ -125,8 +125,8 @@ if __name__ == "__main__":
 	# Define Callbacks
 	callbacks = [
 		keras.callbacks.EarlyStopping(
-			monitor="val_loss",
-			min_delta=0.05,
+			monitor="val_sparse_categorical_accuracy",
+			min_delta=0.01,
 			patience=15,
 			verbose=0,
 			mode="auto",
@@ -134,12 +134,12 @@ if __name__ == "__main__":
 			start_from_epoch=3,
 		),
 		keras.callbacks.ReduceLROnPlateau(
-			monitor="val_loss",
+			monitor="val_sparse_categorical_accuracy",
 			factor=0.3,
 			patience=5,
 			verbose=0,
 			mode="auto",
-			min_delta=0.05,
+			min_delta=0.02,
 			cooldown=0,
 			min_lr=1e-6
 		),

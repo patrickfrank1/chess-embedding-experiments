@@ -179,8 +179,8 @@ def encoder_decoder_transformer() -> dict[str, keras.Model]:
 	ENCODING_DTYPE = "int8"
 	NN_DTYPE = "bfloat16"
 	SEQUENCE_LENGTH = 69
-	VOCABULARY_SIZE = 64
-	TRANSFORMER_DIMENSION = 256
+	VOCABULARY_SIZE = 33
+	INTERMEDIATE_DIMENSION = 512
 	EMBEDDING_DIMENSION = 256
 	DROPOUT = 0.1
 	NUM_HEADS = 16
@@ -207,20 +207,20 @@ def encoder_decoder_transformer() -> dict[str, keras.Model]:
 	)(token_embedding)
 
     # Sum, normalize and apply dropout to embeddings.
-	x = keras.layers.Add()([token_embedding, position_embedding])
-	x = keras.layers.LayerNormalization(
+	x = layers.Add()([token_embedding, position_embedding])
+	x = layers.LayerNormalization(
 		name="embeddings_layer_norm",
 		axis=-1,
 		epsilon=1e-12,
 		dtype=NN_DTYPE,
 	)(x)
-	x = keras.layers.Dropout(DROPOUT,name="embeddings_dropout",)(x)
+	x = layers.Dropout(DROPOUT,name="embeddings_dropout",)(x)
 
 	# Apply successive transformer encoder blocks.
 	for i in range(ENCODER_LAYERS):
 		x = nlp_layers.TransformerEncoder(
 			num_heads=NUM_HEADS,
-			intermediate_dim=TRANSFORMER_DIMENSION,
+			intermediate_dim=INTERMEDIATE_DIMENSION,
 			activation=lambda x: keras.activations.gelu(x, approximate=True),
 			dropout=DROPOUT,
 			layer_norm_epsilon=1e-12,
@@ -228,24 +228,31 @@ def encoder_decoder_transformer() -> dict[str, keras.Model]:
 			name=f"transformer_layer_{i}",
 		)(x)
 	
-	encoder_embedding = keras.layers.Dense(
+	x = layers.Flatten()(x)
+	encoder_embedding = layers.Dense(
 		EMBEDDING_DIMENSION,
 		kernel_initializer=keras.initializers.TruncatedNormal(stddev=STD_DEV),
 		activation="tanh",
-		name="dense",
+		name="dense"
 	)(x)
 
 	# Decoder
-	decoder_input = layers.Input(shape=(SEQUENCE_LENGTH, EMBEDDING_DIMENSION), dtype=NN_DTYPE, name="decoder_input")
-	x = keras.layers.Dropout(
-		DROPOUT,
-		name="embeddings_dropout",
+	decoder_input = layers.Input(shape=(EMBEDDING_DIMENSION), dtype=NN_DTYPE, name="decoder_input")
+	x = layers.Dense(SEQUENCE_LENGTH*EMBEDDING_DIMENSION,
+		kernel_initializer=keras.initializers.TruncatedNormal(stddev=STD_DEV),
+		activation="tanh",
+		name="dense"
 	)(decoder_input)
+	x = layers.Reshape((SEQUENCE_LENGTH, EMBEDDING_DIMENSION))(x)
+	# x = keras.layers.Dropout(
+	# 	DROPOUT,
+	# 	name="embeddings_dropout",
+	# )(decoder_input)
 
 	# Apply successive transformer decoder blocks.
 	for i in range(DECODER_LAYERS):
 		x = nlp_layers.TransformerDecoder(
-			intermediate_dim=TRANSFORMER_DIMENSION,
+			intermediate_dim=INTERMEDIATE_DIMENSION,
 			num_heads=NUM_HEADS,
 			dropout=DROPOUT,
 			layer_norm_epsilon=1e-05,
