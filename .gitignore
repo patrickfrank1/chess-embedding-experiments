@@ -1,9 +1,7 @@
 # Custom
-# Exclude mlflow files
 mlruns
-# Exclude milvus files
 volumes
-# requirements are managed by poetry
+deprecated
 requirements.txt
 
 # Byte-compiled / optimized / DLL files
@@ -128,8 +126,8 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
-.venv
+.env*
+.venv*
 env/
 venv/
 ENV/
