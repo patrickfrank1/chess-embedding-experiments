@@ -1,4 +1,9 @@
 [flake8]
-exclude = .git,__pycache__,.venv,.venv.old,.dvc,.vscode,deprecated
+extend-ignore = E701
 max-complexity = 10
 max-line-length = 120
+exclude = 
+    .git
+    __pycache__
+    .venv
+    .venv.old
