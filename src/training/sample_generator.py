@@ -50,7 +50,7 @@ class ReconstructAutoencoderDataGenerator(AutoencoderDataGenerator):
     def __init__(self, *args, number_squares, **kwargs) -> None:
         self.number_squares = number_squares
         self.mask_token = 16
-        self.encoding = "token_sequence" # token_sequence | tensor
+        self.encoding = "token_sequence"  # token_sequence | tensor
         self.mask = None
         super().__init__(*args, **kwargs)
 
@@ -71,7 +71,7 @@ class ReconstructAutoencoderDataGenerator(AutoencoderDataGenerator):
         for i in range(num_positions):
             np.random.shuffle(squares)
             mask_squares = squares[:self.number_squares]
-            tmp_positions[i,mask_squares,:] = self.mask_token
+            tmp_positions[i, mask_squares, :] = self.mask_token
         self.train_positions = tmp_positions.reshape(num_positions, 8, 8, 15)
 
     def _mask_token_sequence(self) -> None:
@@ -81,5 +81,5 @@ class ReconstructAutoencoderDataGenerator(AutoencoderDataGenerator):
         for i in range(num_positions):
             np.random.shuffle(tokens)
             mask_squares = tokens[:self.number_squares]
-            tmp_positions[i,mask_squares] = self.mask_token
+            tmp_positions[i, mask_squares] = self.mask_token
         self.train_positions = tmp_positions
