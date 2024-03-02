@@ -3,16 +3,20 @@ name = "chess-embedding-experiments"
 version = "0.1.0"
 description = "For rapid prototyping on embedding experiments, starting from scratch"
 authors = ["Patrick Frank <patr.frank@gmx.de>"]
+packages = [
+    { include = "src" }
+]
 
 [tool.poetry.dependencies]
-python = ">=3.9.16,<3.12" # needed to install tensorflow # https://stackoverflow.com/a/76477590
+python = "~3.11.8" # needed to install tensorflow # https://stackoverflow.com/a/76477590
 dvc = {version = "2.55.0", extras = ["s3"]} # needs to be smaller than 3, because of dagshub incompatibility
 chess = "^1.10.0"
 # tensorflow = "2.11.0" # Downgraded from 2.13.0 for AWS Sage Maker Lab Compatibility
 tensorflow = "^2.13.0"
-numpy = "^1.24.3"
 keras-nlp = "^0.6.2"
-pymilvus = "2.3.1" # Should be the same version as the milvus server running in docker
+numpy = "^1.24.3"
+pymilvus = "^2.3.6"
+
 
 [tool.poetry.dev-dependencies]
 mlflow = "^2.5.0"
@@ -21,6 +25,8 @@ matplotlib = "^3.7.2"
 ipywidgets = "^8.1.0"
 llvmlite = "^0.41.0"
 umap-learn = "^0.5.4"
+flake8 = "^7.0.0"
+
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
