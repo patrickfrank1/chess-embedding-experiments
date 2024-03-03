@@ -7,6 +7,7 @@ packages = [
     { include = "src" }
 ]
 
+
 [tool.poetry.dependencies]
 python = "~3.11.8" # needed to install tensorflow # https://stackoverflow.com/a/76477590
 dvc = {version = "2.55.0", extras = ["s3"]} # needs to be smaller than 3, because of dagshub incompatibility
@@ -18,14 +19,18 @@ numpy = "^1.24.3"
 pymilvus = "^2.3.6"
 
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 mlflow = "^2.5.0"
 jupyter = "^1.0.0"
 matplotlib = "^3.7.2"
 ipywidgets = "^8.1.0"
 llvmlite = "^0.41.0"
 umap-learn = "^0.5.4"
+
+
+[tool.poetry.group.test.dependencies]
 flake8 = "^7.0.0"
+pytest = "^8.0.2"
 
 
 [build-system]
