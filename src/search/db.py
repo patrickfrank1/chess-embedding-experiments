@@ -3,6 +3,7 @@ from datetime import datetime
 from pymilvus import Collection, connections, FieldSchema, CollectionSchema, DataType, SearchResult
 from pymilvus import utility
 
+
 class MilvusVectorStore:
     DTYPE_PARAMETERS = {
         "float": {
@@ -13,7 +14,7 @@ class MilvusVectorStore:
         "binary": {
             "dtype": DataType.BINARY_VECTOR,
             "index_type": "BIN_IVF_FLAT",
-            "metric_type": "Hamming"
+            "metric_type": "HAMMING"
         }
     }
     ID_FIELD = "id"
