@@ -22,7 +22,7 @@ class MilvusVectorStore:
 
     def __init__(
         self,
-        embedding_dimensions: str,
+        embedding_dimensions: int,
         embedding_type: str,  # float | binary
         host: str = "localhost",
         port: str = "19530",
