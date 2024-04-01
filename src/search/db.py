@@ -93,17 +93,17 @@ class MilvusVectorStore:
         }
         self.create_index(params)
 
-    def insert_embeddings(self, embeddings: list) -> list[str]:
+    def insert_embeddings(self, data: list | dict) -> list[str]:
         """Insert embeddings into the collection."""
         if not self.collection:
             raise ValueError("Collection not created or loaded.")
-        mr = self.collection.insert(embeddings)
-        print(f"Inserted {len(mr.primary_keys)} embeddings.")
+        mr = self.collection.insert(data)
+        # print(f"Inserted {len(mr.primary_keys)} embeddings.")
         return mr.primary_keys
 
     def search_by_embeddings(
         self,
-        query_embeddings: list[list[float]] | list[list[bool]],
+        query_embeddings: list[list[float]] | list[bytes],
         top_k: int = 10,
         nprobe: int = 10
     ) -> SearchResult:
