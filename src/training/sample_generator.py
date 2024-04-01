@@ -8,6 +8,7 @@ from src.utils.fileops import file_paths_from_directory
 class AutoencoderDataGenerator(tf.keras.utils.Sequence):
     def __init__(self, directory_path: str, batch_size: int) -> None:
         self.dtype = np.float16
+        self.all_data_seen = False
         self.directory_path = directory_path
         self.files = file_paths_from_directory(self.directory_path, ".npz")
         self.current_file = self.files.pop()
@@ -33,6 +34,7 @@ class AutoencoderDataGenerator(tf.keras.utils.Sequence):
     def on_epoch_end(self) -> None:
         self.visited_files.append(self.current_file)
         if len(self.files) == 0:
+            self.all_data_seen = True
             self.files = self.visited_files
             self.visited_files = []
         self.current_file = self.files.pop()
