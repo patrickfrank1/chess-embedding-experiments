@@ -26,6 +26,14 @@
 
 ### Milvus
 
+Start local milvus db instance with:
+
+`docker compose -f milvus-2-3-10-standalone-docker-compose.yml up -d`
+
+Stop the instance with:
+
+`docker compose -f milvus-2-3-10-standalone-docker-compose.yml down`
+
 - could only get milvus 2.3.1 to work, so use that for now
 - but had to downgrade python to 3.9, because of compatibility issues
 - and only works with recent tensorflow version, so it's incompatible with aws sage maker
